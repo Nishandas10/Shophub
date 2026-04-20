@@ -45,4 +45,11 @@ return [
         'key_secret' => env('RAZORPAY_KEY_SECRET'),
     ],
 
+    'zenconnect' => [
+        'url' => env('ZENCONNECT_URL', 'http://localhost:8000'),
+        'api_key' => env('ZENCONNECT_API_KEY', 'zc_shophub_key_123456789'),
+        'api_secret' => env('ZENCONNECT_API_SECRET', 'shophub_secret_abcdefghijklmnopqrstuvwxyz123456'),
+        'webhook_secret' => env('ZENCONNECT_WEBHOOK_SECRET', 'whsec_shophub_webhook_secret_123456'),
+    ],
+
 ];

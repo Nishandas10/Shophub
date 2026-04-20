@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Address;
 use App\Models\Cart;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -84,7 +85,17 @@ class PaymentController extends Controller
             'razorpay_order_id' => 'required|string',
             'razorpay_payment_id' => 'required|string',
             'razorpay_signature' => 'required|string',
+            'address_id' => 'required|exists:addresses,id',
         ]);
+
+        // Verify the address belongs to the user
+        $address = Address::where('id', $request->address_id)
+            ->where('user_id', $request->user()->id)
+            ->first();
+
+        if (!$address) {
+            return response()->json(['message' => 'Invalid shipping address.'], 422);
+        }
 
         // Verify signature
         $expectedSignature = hash_hmac(
@@ -106,7 +117,7 @@ class PaymentController extends Controller
             return response()->json(['message' => 'Cart is empty.'], 422);
         }
 
-        return DB::transaction(function () use ($request, $cartItems) {
+        return DB::transaction(function () use ($request, $cartItems, $address) {
             $totalPrice = 0;
 
             foreach ($cartItems as $item) {
@@ -128,6 +139,12 @@ class PaymentController extends Controller
                 'razorpay_order_id' => $request->razorpay_order_id,
                 'razorpay_payment_id' => $request->razorpay_payment_id,
                 'payment_status' => 'paid',
+                'shipping_name' => $address->full_name,
+                'shipping_phone' => $address->phone,
+                'shipping_address' => $address->address_line1 . ($address->address_line2 ? ', ' . $address->address_line2 : ''),
+                'shipping_city' => $address->city,
+                'shipping_state' => $address->state,
+                'shipping_pincode' => $address->pincode,
             ]);
 
             foreach ($cartItems as $item) {

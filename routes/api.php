@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AiController;
 use App\Http\Controllers\Api\AuthController;
@@ -7,11 +8,16 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\SupportController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// ZenConnect Webhook (no auth required, verified by signature)
+Route::post('/support/webhook', [SupportController::class, 'webhook']);
 
 // Public product routes
 Route::get('/products', [ProductController::class, 'index']);
@@ -23,6 +29,18 @@ Route::middleware('auth:sanctum')->group(function () {
     // Auth
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::put('/profile', [ProfileController::class, 'update']);
+
+    // Addresses
+    Route::get('/addresses', [AddressController::class, 'index']);
+    Route::post('/addresses', [AddressController::class, 'store']);
+    Route::get('/addresses/{address}', [AddressController::class, 'show']);
+    Route::put('/addresses/{address}', [AddressController::class, 'update']);
+    Route::delete('/addresses/{address}', [AddressController::class, 'destroy']);
+    Route::put('/addresses/{address}/default', [AddressController::class, 'setDefault']);
 
     // Cart
     Route::get('/cart', [CartController::class, 'index']);
@@ -43,6 +61,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // AI - Shopping Assistant (customer)
     Route::post('/ai/assistant', [AiController::class, 'shoppingAssistant']);
+
+    // Support Tickets
+    Route::get('/support/tickets', [SupportController::class, 'index']);
+    Route::post('/support/tickets', [SupportController::class, 'store']);
+    Route::get('/support/tickets/{ticket}', [SupportController::class, 'show']);
+    Route::post('/support/tickets/{ticket}/comments', [SupportController::class, 'addComment']);
+    Route::get('/support/categories', [SupportController::class, 'categories']);
 
     // Admin routes
     Route::middleware('admin')->prefix('admin')->group(function () {

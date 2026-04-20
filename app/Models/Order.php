@@ -16,6 +16,12 @@ class Order extends Model
         'razorpay_order_id',
         'razorpay_payment_id',
         'payment_status',
+        'shipping_name',
+        'shipping_phone',
+        'shipping_address',
+        'shipping_city',
+        'shipping_state',
+        'shipping_pincode',
     ];
 
     protected function casts(): array
