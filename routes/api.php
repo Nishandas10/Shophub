@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AiController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders', [OrderController::class, 'index']);
     Route::post('/orders', [OrderController::class, 'store']);
     Route::get('/orders/{order}', [OrderController::class, 'show']);
+
+    // Payments (Razorpay)
+    Route::post('/payment/create-order', [PaymentController::class, 'createOrder']);
+    Route::post('/payment/verify', [PaymentController::class, 'verifyPayment']);
+    Route::get('/payment/key', [PaymentController::class, 'getKey']);
 
     // AI - Shopping Assistant (customer)
     Route::post('/ai/assistant', [AiController::class, 'shoppingAssistant']);

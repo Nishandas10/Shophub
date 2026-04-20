@@ -13,6 +13,9 @@ class Order extends Model
         'user_id',
         'total_price',
         'status',
+        'razorpay_order_id',
+        'razorpay_payment_id',
+        'payment_status',
     ];
 
     protected function casts(): array

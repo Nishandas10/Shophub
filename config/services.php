@@ -40,4 +40,9 @@ return [
         'model' => env('GEMINI_MODEL', 'gemini-1.5-flash'),
     ],
 
+    'razorpay' => [
+        'key_id' => env('RAZORPAY_KEY_ID'),
+        'key_secret' => env('RAZORPAY_KEY_SECRET'),
+    ],
+
 ];
