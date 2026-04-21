@@ -107,7 +107,9 @@ class SupportController extends Controller
         }
 
         // Fetch latest from ZenConnect
-        $zenConnectData = $this->zenConnect->getTicket($ticket->zenconnect_id);
+        $zenConnectData = $ticket->zenconnect_id
+            ? $this->zenConnect->getTicket($ticket->zenconnect_id)
+            : null;
 
         if ($zenConnectData) {
             $ticket->update([
@@ -182,8 +184,17 @@ class SupportController extends Controller
     {
         $categories = $this->zenConnect->getCategories();
 
+        $fallbackCategories = [
+            ['id' => 1, 'name' => 'Order Issues', 'slug' => 'order-issues'],
+            ['id' => 2, 'name' => 'Product Questions', 'slug' => 'product-questions'],
+            ['id' => 3, 'name' => 'Returns & Refunds', 'slug' => 'returns-refunds'],
+            ['id' => 4, 'name' => 'Shipping & Delivery', 'slug' => 'shipping-delivery'],
+            ['id' => 5, 'name' => 'Account & Billing', 'slug' => 'account-billing'],
+            ['id' => 6, 'name' => 'General Inquiry', 'slug' => 'general-inquiry'],
+        ];
+
         return response()->json([
-            'categories' => $categories['categories'] ?? [],
+            'categories' => $categories['categories'] ?? $fallbackCategories,
         ]);
     }
 
